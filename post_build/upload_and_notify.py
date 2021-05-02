@@ -51,8 +51,8 @@ if __name__ == "__main__":
     file = sys.argv[1]
     email = sys.argv[2]
 
-    upload_file(file)
-
     filename = file.split("/")[-1]
+    upload_file(file, filename)
+
     link = "https://"+settings["BUCKET_NAME"]+".s3."+settings["AWS_REGION_NAME"]+".amazonaws.com/"+filename
     send_email(email, link)

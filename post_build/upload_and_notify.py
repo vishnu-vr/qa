@@ -3,6 +3,9 @@ from botocore.exceptions import ClientError
 import json
 import sys
 import smtplib, ssl
+import os
+from os import path
+import glob
 
 settings = None
 
@@ -45,14 +48,43 @@ def upload_file(file_name, object_name=None):
         print(e)
     return True
 
+def get_file_path(platform):
+	if (platform == "ios"):
+		base_loc = settings["IOS_PATH"]
+		full_loc = glob.glob(path.join(base_loc,"*.ipa"))#base_loc + '\\' + "*.ipa";
+	else:
+		base_loc = settings["ANDROID_PATH"]
+		full_loc = glob.glob(path.join(base_loc,"*.apk"))#base_loc + '\\' + "*.apk"
+
+	return full_loc
+
+def build_status(status):
+	print(status)
+	sys.exit()
+
 if __name__ == "__main__":
     with open('../settings.json') as f:
         settings = json.load(f)
-    file = sys.argv[1]
-    email = sys.argv[2]
+    filename = sys.argv[1]
+    platform = sys.argv[2]
+    email = sys.argv[3]
 
-    filename = file.split("/")[-1]
-    upload_file(file, filename)
+    if platform not in ["ios","android"]:
+    	print("invalid platform")
+    	sys.exit()
+
+    paths = get_file_path(platform)
+    if len(paths) == 0:
+    	build_status("failed")
+
+    filepath = paths[0]
+    print(filepath)
+    if (not path.exists(filepath)):
+    	build_status("failed")
+
+    # upload_file(filepath, filename)
+    os.remove(filepath)
 
     link = "https://"+settings["BUCKET_NAME"]+".s3."+settings["AWS_REGION_NAME"]+".amazonaws.com/"+filename
-    send_email(email, link)
+    # send_email(email, link)
+    build_status("success")

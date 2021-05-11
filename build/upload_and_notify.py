@@ -6,6 +6,7 @@ import smtplib, ssl
 import os
 from os import path
 import glob
+from common import send_status
 
 settings = None
 
@@ -58,10 +59,6 @@ def get_file_path(platform):
 
 	return full_loc
 
-def build_status(status):
-	print(status)
-	sys.exit()
-
 if __name__ == "__main__":
     with open('../settings.json') as f:
         settings = json.load(f)
@@ -75,16 +72,18 @@ if __name__ == "__main__":
 
     paths = get_file_path(platform)
     if len(paths) == 0:
-    	build_status("Failed")
+        send_status(filename, "Failed", settings);
+        sys.exit()
 
     filepath = paths[0]
     print(filepath)
     if (not path.exists(filepath)):
-    	build_status("Failed")
+    	send_status(filename, "Failed", settings);
+        sys.exit()
 
     upload_file(filepath, filename)
     os.remove(filepath)
 
     link = "https://"+settings["BUCKET_NAME"]+".s3."+settings["AWS_REGION_NAME"]+".amazonaws.com/"+filename
     send_email(email, link)
-    build_status("Finished")
+    send_status(filename, "Finished", settings);

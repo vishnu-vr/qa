@@ -75,16 +75,16 @@ if __name__ == "__main__":
 
     paths = get_file_path(platform)
     if len(paths) == 0:
-    	build_status("failed")
+    	build_status("Failed")
 
     filepath = paths[0]
     print(filepath)
     if (not path.exists(filepath)):
-    	build_status("failed")
+    	build_status("Failed")
 
-    # upload_file(filepath, filename)
+    upload_file(filepath, filename)
     os.remove(filepath)
 
     link = "https://"+settings["BUCKET_NAME"]+".s3."+settings["AWS_REGION_NAME"]+".amazonaws.com/"+filename
-    # send_email(email, link)
-    build_status("success")
+    send_email(email, link)
+    build_status("Finished")

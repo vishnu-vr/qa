@@ -15,3 +15,13 @@ def send_status(jobuuid, status, settings):
 	}
 	x = requests.put(end_point, data = json.dumps(myobj), headers = headers, verify=False)
 	print(x)
+
+def send_overall_status(data):
+	trigger_build_url = settings["TRIGGER_BUILD_URL"]
+	end_point = trigger_build_url + "/api/jobStatus/updateJob/" + jobuuid #/jobuuid
+	print(end_point)
+	headers = {
+	    "Content-Type": "application/json"
+	}
+	x = requests.post(end_point, data = json.dumps(data), headers = headers, verify=False)
+	print(x)

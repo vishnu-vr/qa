@@ -10,7 +10,7 @@ import json
 settings = None
 
 def trigger_internal_job(custom_arguements, uuid, email):
-    TEAMCITY_URL = settings['TEAMCITY_URL']
+    TEAMCITY_URL = settings['TEAMCITY_URL'] + "/buildQueue"
     headers = {
         "Authorization": "Bearer " + settings['AUTHORIZATION'],
         "Content-Type": "application/json"
@@ -39,6 +39,11 @@ def trigger_internal_job(custom_arguements, uuid, email):
     x = requests.post(TEAMCITY_URL, data = json.dumps(myobj), headers = headers)
     print(x.text)
 
+    if x.status_code == 200:
+        return True
+
+    return False
+
 def consumer(queue):
     signal_handler = SignalHandler()
     while not signal_handler.received_signal:
@@ -49,12 +54,15 @@ def consumer(queue):
             try:
                 print(message.body)
                 payload = json.loads(message.body)
-                trigger_internal_job(payload["message"],payload["random"],payload["email"])
+                is_job_triggered = trigger_internal_job(payload["message"],payload["random"],payload["email"])
             except Exception as e:
                 print(f"exception while processing message: {repr(e)}")
                 continue
 
-            message.delete()
+            # if the job is successfully queued in teamcity
+            # remove the payload from sqs
+            if (is_job_triggered):
+                message.delete()
 
 if __name__ == "__main__":
     with open('../settings.json') as f:

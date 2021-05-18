@@ -24,10 +24,7 @@ def get_individual_status(job_number):
 	return response.json()
 
 
-if __name__ == "__main__":
-	with open('../settings.json') as f:
-	    settings = json.load(f)
-
+def get_and_send_overall_status():
 	teamcity_status = get_overall_status()
 
 	build_status_list=[]
@@ -38,4 +35,13 @@ if __name__ == "__main__":
 		"BuildStatus" : build_status_list
 	}
 	send_overall_status(data);
+
+if __name__ == "__main__":
+	with open('../settings.json') as f:
+	    settings = json.load(f)
+
+	while True:
+		get_and_send_overall_status()
+		# send every 5 minutes
+		time.sleep(60*5)
 

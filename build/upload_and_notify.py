@@ -27,13 +27,6 @@ def send_email(receiver_email, link):
         server.sendmail(sender_email, receiver_email, message)
 
 def upload_file(file_name, object_name=None):
-    """Upload a file to an S3 bucket
-
-    :param file_name: File to upload
-    :param bucket: Bucket to upload to
-    :param object_name: S3 object name. If not specified then file_name is used
-    :return: True if file was uploaded, else False
-    """
 
     # If S3 object_name was not specified, use file_name
     if object_name is None:
@@ -81,9 +74,10 @@ if __name__ == "__main__":
     	send_status(filename, "Failed", settings);
         sys.exit()
 
-    upload_file(filepath, filename)
+    filename_with_ext = filename + (".ipa" if platform == "ios" else ".apk")
+    upload_file(filepath, filename_with_ext)
     os.remove(filepath)
 
-    link = "https://"+settings["BUCKET_NAME"]+".s3."+settings["AWS_REGION_NAME"]+".amazonaws.com/"+filename
+    link = "https://"+settings["TRIGGER_BUILD_URL"]+"/GenerateLink/"+filename
     send_email(email, link)
     send_status(filename, "Finished", settings);

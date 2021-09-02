@@ -71,7 +71,7 @@ if __name__ == "__main__":
     filepath = paths[0]
     print(filepath)
     if (not path.exists(filepath)):
-    	send_status(filename, "Failed", settings);
+        send_status(filename, "Failed", settings);
         sys.exit()
 
     filename_with_ext = filename + (".ipa" if platform == "ios" else ".apk")

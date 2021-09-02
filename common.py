@@ -9,6 +9,7 @@ def send_status(jobuuid, status, settings):
 	myobj = {
 	    "Status": status
 	}
+	print(myobj)
 
 	x = requests.put(end_point, data = json.dumps(myobj), headers = build_header(settings), verify=False)
 	print(x)
@@ -17,6 +18,7 @@ def send_overall_status(data, settings):
 	trigger_build_url = settings["TRIGGER_BUILD_URL"]
 	end_point = trigger_build_url + "/api/jobStatus/updateJob"
 	print(end_point)
+	print(data)
 
 	x = requests.put(end_point, data = json.dumps(data), headers = build_header(settings), verify=False)
 	print(x)

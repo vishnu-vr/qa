@@ -67,12 +67,14 @@ if __name__ == "__main__":
 
     paths = get_file_path(platform)
     if len(paths) == 0:
+        print("path does not exists")
         send_status(filename, "Failed", settings);
         sys.exit()
 
     filepath = paths[0]
     print(filepath)
     if (not path.exists(filepath)):
+        print("file does not exists")
         send_status(filename, "Failed", settings);
         sys.exit()
 

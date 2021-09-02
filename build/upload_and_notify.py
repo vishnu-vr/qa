@@ -6,6 +6,8 @@ import smtplib, ssl
 import os
 from os import path
 import glob
+import sys
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from common import send_status
 
 settings = None

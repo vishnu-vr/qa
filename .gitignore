@@ -1,2 +1,3 @@
 sqs_consumer/test
 settings.json
+__pycache__/

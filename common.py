@@ -15,7 +15,7 @@ def send_status(jobuuid, status, settings):
 
 def send_overall_status(data, settings):
 	trigger_build_url = settings["TRIGGER_BUILD_URL"]
-	end_point = trigger_build_url + "/api/jobStatus/updateJob/" + jobuuid #/jobuuid
+	end_point = trigger_build_url + "/api/jobStatus/updateJob"
 	print(end_point)
 
 	x = requests.put(end_point, data = json.dumps(data), headers = build_header(settings), verify=False)

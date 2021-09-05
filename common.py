@@ -11,8 +11,11 @@ def send_status(jobuuid, status, settings):
 	}
 	print(myobj)
 
-	x = requests.put(end_point, data = json.dumps(myobj), headers = build_header(settings), verify=False)
-	print(x)
+	try:
+		x = requests.put(end_point, data = json.dumps(myobj), headers = build_header(settings), verify=False)
+		print(x)
+	except Exception as e:
+		print("Was not able to send status")
 
 def send_overall_status(data, settings):
 	trigger_build_url = settings["TRIGGER_BUILD_URL"]
@@ -20,8 +23,11 @@ def send_overall_status(data, settings):
 	print(end_point)
 	print(data)
 
-	x = requests.put(end_point, data = json.dumps(data), headers = build_header(settings), verify=False)
-	print(x)
+	try:
+		x = requests.put(end_point, data = json.dumps(data), headers = build_header(settings), verify=False)
+		print(x)
+	except Exception as e:
+		print("Was not able to send status")
 
 def build_header(settings):
 	headers = {

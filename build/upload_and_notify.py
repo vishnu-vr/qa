@@ -9,24 +9,26 @@ import glob
 import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from common import send_status
+from email.message import EmailMessage
 
 settings = None
 
-def send_email(receiver_email, link):
+def send_email(receiver_email, message, failed=False):
     port = 465  # For SSL
     smtp_server = "smtp.gmail.com"
     sender_email = settings["EMAIL"]
     password = settings["EMAIL_PASSWORD"]
-    message = """\
-    Subject: The build you requested is ready.
 
-    {}
-    """.format(link)
+    msg = EmailMessage()
+    msg.set_content(message)
+    msg['Subject'] = ("Build Failed" if failed else "Build Succeeded")
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
 
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
         server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_email, message)
+        server.send_message(msg)
 
 def upload_file(file_name, object_name=None):
 
@@ -69,6 +71,7 @@ if __name__ == "__main__":
     if len(paths) == 0:
         print("path does not exists")
         send_status(filename, "Failed", settings);
+        send_email(email, "Build Failed", failed=True)
         sys.exit()
 
     filepath = paths[0]
@@ -76,6 +79,7 @@ if __name__ == "__main__":
     if (not path.exists(filepath)):
         print("file does not exists")
         send_status(filename, "Failed", settings);
+        send_email(email, "Build Failed", failed=True)
         sys.exit()
 
     filename_with_ext = filename + (".ipa" if platform == "ios" else ".apk")

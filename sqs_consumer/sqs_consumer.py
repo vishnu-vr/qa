@@ -1,9 +1,12 @@
 import os
 import requests
-import json
 import boto3
-from common import SignalHandler, send_queue_metrics
+from sqs_common import SignalHandler, send_queue_metrics
 import json
+import sys
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
+from common import send_status
+from send_teamcity_status import get_and_send_overall_status
 
 # dlq = sqs.get_queue_by_name(QueueName=os.environ["SQS_DEAD_LETTER_QUEUE_NAME"])
 
@@ -13,7 +16,8 @@ def trigger_internal_job(custom_arguements, uuid, email):
     TEAMCITY_URL = settings['TEAMCITY_URL'] + "/buildQueue"
     headers = {
         "Authorization": "Bearer " + settings['AUTHORIZATION'],
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Accept": "application/json"
     }
     myobj = {
         "buildType": {
@@ -36,13 +40,23 @@ def trigger_internal_job(custom_arguements, uuid, email):
             ]
         }
     }
-    x = requests.post(TEAMCITY_URL, data = json.dumps(myobj), headers = headers)
-    print(x.text)
 
-    if x.status_code == 200:
-        return True
+    try:
+        x = requests.post(TEAMCITY_URL, data = json.dumps(myobj), headers = headers)
+        print(x.status_code)
 
+        if x.status_code == 200:
+            response = x.json()
+            print("Queued, Build ID: + " + response["id"])
+            send_status(uuid, "Queued - TC", settings, response["id"]);
+            return True
+    except Exception as e:
+        print("Error while triggering teamcity job")
+
+
+    send_status(uuid, "Failed", settings);
     return False
+
 
 def consumer(queue):
     signal_handler = SignalHandler()
@@ -54,15 +68,16 @@ def consumer(queue):
             try:
                 print(message.body)
                 payload = json.loads(message.body)
-                is_job_triggered = trigger_internal_job(payload["message"],payload["random"],payload["email"])
+                if (payload["type"] == "retrieve_status"):
+                    get_and_send_overall_status(payload)
+                else:
+                    trigger_internal_job(payload["message"],payload["random"],payload["email"])
             except Exception as e:
                 print(f"exception while processing message: {repr(e)}")
                 continue
 
-            # if the job is successfully queued in teamcity
             # remove the payload from sqs
-            if (is_job_triggered):
-                message.delete()
+            message.delete()
 
 if __name__ == "__main__":
     with open('../settings.json') as f:

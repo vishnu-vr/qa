@@ -2,7 +2,7 @@ import os
 
 import boto3
 
-from common import SignalHandler, process_message, queue_length
+from sqs_common import SignalHandler, process_message, queue_length
 
 sqs = boto3.resource("sqs")
 dlq = sqs.get_queue_by_name(QueueName=os.environ["SQS_DEAD_LETTER_QUEUE_NAME"])

@@ -1,13 +1,14 @@
 import requests
 import json
 
-def send_status(jobuuid, status, settings):
+def send_status(jobuuid, status, settings, teamCityID=None):
 	trigger_build_url = settings["TRIGGER_BUILD_URL"]
 	SecretKey = settings["TRIGGER_BUILD_API_SECRET_KEY"]
 	end_point = trigger_build_url + "/api/jobStatus/updateJob/" + jobuuid #/jobuuid
 	print(end_point)
 	myobj = {
-	    "Status": status
+	    "Status": status,
+	    "TeamCityID": teamCityID
 	}
 	print(myobj)
 

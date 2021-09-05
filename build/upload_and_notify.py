@@ -86,6 +86,6 @@ if __name__ == "__main__":
     upload_file(filepath, filename_with_ext)
     os.remove(filepath)
 
-    link = settings["TRIGGER_BUILD_URL"]+"/GenerateLink/"+filename
+    link = settings["TRIGGER_BUILD_URL"]+"/GenerateLink/"+filename_with_ext
     send_email(email, link)
     send_status(filename, "Finished", settings);

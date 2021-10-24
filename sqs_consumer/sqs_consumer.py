@@ -47,11 +47,13 @@ def trigger_internal_job(custom_arguements, uuid, email):
 
         if x.status_code == 200:
             response = x.json()
-            print("Queued, Build ID: + " + response["id"])
-            send_status(uuid, "Queued - TC", settings, response["id"]);
+            responseId = str(response["id"])
+            print("Queued, Build ID: + " + responseId)
+            send_status(uuid, "Queued - TC", settings, responseId);
             return True
     except Exception as e:
         print("Error while triggering teamcity job")
+        print(e)
 
 
     send_status(uuid, "Failed", settings);
@@ -74,7 +76,7 @@ def consumer(queue):
                     trigger_internal_job(payload["message"],payload["random"],payload["email"])
             except Exception as e:
                 print(f"exception while processing message: {repr(e)}")
-                continue
+                # continue
 
             # remove the payload from sqs
             message.delete()

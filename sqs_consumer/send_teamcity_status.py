@@ -6,7 +6,7 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from common import send_overall_status
 import time
 
-settings=None
+# settings=None
 
 # def get_overall_status():
 # 	headers = {
@@ -18,22 +18,26 @@ settings=None
 # 	return response.json()
 
 
-def get_individual_status(job_number):
+def get_individual_status(job_number, settings):
+	print("inside get_individual_status")
 	headers = {
 	    "Authorization": "Bearer " + settings['AUTHORIZATION'],
 	    "Accept": "application/json"
 	}
 	url = settings["TEAMCITY_URL"] + "/builds/id:" + str(job_number)
+	print(url)
 	response = requests.get(url, headers=headers)
+	print(response)
 	return response.json()
 
 
-def get_and_send_overall_status(payload):
+def get_and_send_overall_status(payload, settings):
 	# teamcity_status = get_overall_status()
 
 	build_status_list=[]
 	for id in payload["IDS"]:
-		build_status_list.append(get_individual_status(id))
+		print(id)
+		build_status_list.append(get_individual_status(id, settings))
 
 	data = {
 		"BuildStatus" : build_status_list

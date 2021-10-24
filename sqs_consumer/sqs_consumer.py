@@ -41,6 +41,7 @@ def trigger_internal_job(custom_arguements, uuid, email):
         }
     }
 
+    # return True
     try:
         x = requests.post(TEAMCITY_URL, data = json.dumps(myobj), headers = headers)
         print(x.status_code)
@@ -66,12 +67,13 @@ def consumer(queue):
         # send_queue_metrics(queue)
         # send_queue_metrics(dlq)
         messages = queue.receive_messages(MaxNumberOfMessages=10, WaitTimeSeconds=1)
+        # print("retreived messages")
         for message in messages:
             try:
                 print(message.body)
                 payload = json.loads(message.body)
                 if (payload["type"] == "retrieve_status"):
-                    get_and_send_overall_status(payload)
+                    get_and_send_overall_status(payload, settings)
                 else:
                     trigger_internal_job(payload["message"],payload["random"],payload["email"])
             except Exception as e:

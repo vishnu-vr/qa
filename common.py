@@ -14,7 +14,7 @@ def send_status(jobuuid, status, settings, teamCityID=None):
 
 	try:
 		x = requests.put(end_point, data = json.dumps(myobj), headers = build_header(settings), verify=False)
-		print(x)
+		print(x.status_code, x.json())
 	except Exception as e:
 		print("Was not able to send status")
 

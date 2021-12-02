@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
     if platform not in ["ios","android"]:
         raise Exception("invalid platform")
-    	sys.exit()
+        sys.exit()
 
     paths = get_file_path(platform)
     if len(paths) == 0:

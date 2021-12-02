@@ -89,4 +89,4 @@ if __name__ == "__main__":
 
     link = settings["TRIGGER_BUILD_URL"]+"/GenerateLink/"+filename_with_ext
     send_email(email, link)
-    send_status(filename, "Finished", settings);
+    send_status(filename, "SUCCESS", settings);

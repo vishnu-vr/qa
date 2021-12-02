@@ -64,14 +64,14 @@ if __name__ == "__main__":
     email = sys.argv[3]
 
     if platform not in ["ios","android"]:
-    	print("invalid platform")
+        raise Exception("invalid platform")
     	sys.exit()
 
     paths = get_file_path(platform)
     if len(paths) == 0:
-        print("path does not exists")
         send_status(filename, "Failed", settings);
         send_email(email, "Build Failed", failed=True)
+        raise Exception("path does not exists")
         sys.exit()
 
     filepath = paths[0]
@@ -80,6 +80,7 @@ if __name__ == "__main__":
         print("file does not exists")
         send_status(filename, "Failed", settings);
         send_email(email, "Build Failed", failed=True)
+        raise Exception("file does not exists")
         sys.exit()
 
     filename_with_ext = filename + (".ipa" if platform == "ios" else ".apk")

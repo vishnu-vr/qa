@@ -12,7 +12,7 @@ from send_teamcity_status import get_and_send_overall_status
 
 settings = None
 
-def trigger_internal_job(custom_arguements, uuid, email, branch):
+def trigger_internal_job(custom_arguements, uuid, email, branch, platform):
     TEAMCITY_URL = settings['TEAMCITY_URL'] + "/buildQueue"
     headers = {
         "Authorization": "Bearer " + settings['AUTHORIZATION'],
@@ -40,6 +40,10 @@ def trigger_internal_job(custom_arguements, uuid, email, branch):
                 {
                     "name": "branch",
                     "value": branch
+                },
+                {
+                    "name": "platform",
+                    "value": platform
                 }
             ]
         }
@@ -79,7 +83,7 @@ def consumer(queue):
                 if (payload["type"] == "retrieve_status"):
                     get_and_send_overall_status(payload, settings)
                 else:
-                    trigger_internal_job(payload["message"],payload["random"],payload["email"],payload["branch"])
+                    trigger_internal_job(payload["message"],payload["random"],payload["email"],payload["branch"],payload["platform"])
             except Exception as e:
                 print(f"exception while processing message: {repr(e)}")
                 # continue

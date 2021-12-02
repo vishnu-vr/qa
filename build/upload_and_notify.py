@@ -15,9 +15,9 @@ settings = None
 
 def send_email(receiver_email, message, failed=False):
     port = 465  # For SSL
-    smtp_server = "smtp.gmail.com"
+    smtp_server = settings["SMTP_SERVER"]
     sender_email = settings["EMAIL"]
-    password = settings["EMAIL_PASSWORD"]
+    password = settings["SMTP_PASSWORD"]
 
     msg = EmailMessage()
     msg.set_content(message)
@@ -27,7 +27,7 @@ def send_email(receiver_email, message, failed=False):
 
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
-        server.login(sender_email, password)
+        server.login("apikey", password)
         server.send_message(msg)
 
 def upload_file(file_name, object_name=None):

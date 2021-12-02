@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
     paths = get_file_path(platform)
     if len(paths) == 0:
-        send_status(filename, "Failed", settings);
+        send_status(filename, "FAILURE", settings);
         send_email(email, "Build Failed", failed=True)
         raise Exception("path does not exists")
         sys.exit()
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     print(filepath)
     if (not path.exists(filepath)):
         print("file does not exists")
-        send_status(filename, "Failed", settings);
+        send_status(filename, "FAILURE", settings);
         send_email(email, "Build Failed", failed=True)
         raise Exception("file does not exists")
         sys.exit()

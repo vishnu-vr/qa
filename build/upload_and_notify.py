@@ -46,13 +46,13 @@ def upload_file(file_name, object_name=None):
         print(e)
     return True
 
-def get_file_path(platform):
+def get_file_path(platform, platformBuildAction):
 	if (platform == "ios"):
 		base_loc = settings["IOS_PATH"]
 		full_loc = glob.glob(path.join(base_loc,"*.ipa"))#base_loc + '\\' + "*.ipa";
 	else:
 		base_loc = settings["ANDROID_PATH"]
-		full_loc = glob.glob(path.join(base_loc,"*.apk"))#base_loc + '\\' + "*.apk"
+		full_loc = glob.glob(path.join(base_loc, platformBuildAction, "*.apk"))#base_loc + '\\' + "*.apk"
 
 	return full_loc
 
@@ -62,12 +62,13 @@ if __name__ == "__main__":
     filename = sys.argv[1]
     platform = sys.argv[2]
     email = sys.argv[3]
+    platformBuildAction = sys.argv[4]
 
     if platform not in ["ios","android"]:
         raise Exception("invalid platform")
         sys.exit()
 
-    paths = get_file_path(platform)
+    paths = get_file_path(platform, platformBuildAction)
     if len(paths) == 0:
         send_status(filename, "FAILURE", settings);
         send_email(email, "Build Failed", failed=True)

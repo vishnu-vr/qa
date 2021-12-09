@@ -56,19 +56,3 @@ def send_email(receiver_email, message, settings, failed=False):
     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
         server.login("apikey", password)
         server.send_message(msg)
-
-def upload_file(file_name, object_name=None):
-
-    # If S3 object_name was not specified, use file_name
-    if object_name is None:
-        object_name = file_name
-
-    # Upload the file
-    s3_client = boto3.client('s3', region_name = settings["AWS_REGION_NAME"],
-                                     aws_access_key_id = settings["AWS_ACCESS_KEY"],
-                                     aws_secret_access_key = settings["AWS_SECRET_KEY"])
-    try:
-        response = s3_client.upload_file(file_name, settings["BUCKET_NAME"], object_name, ExtraArgs={'ACL':'public-read'})
-    except ClientError as e:
-        print(e)
-    return True

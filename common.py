@@ -1,5 +1,7 @@
 import requests
 import json
+import smtplib, ssl
+from email.message import EmailMessage
 
 def send_status(jobuuid, status, settings, teamCityID=None):
 	trigger_build_url = settings["TRIGGER_BUILD_URL"]

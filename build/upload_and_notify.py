@@ -2,14 +2,12 @@ import boto3
 from botocore.exceptions import ClientError
 import json
 import sys
-import smtplib, ssl
 import os
 from os import path
 import glob
 import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from common import send_status, send_email
-from email.message import EmailMessage
 
 settings = None
 

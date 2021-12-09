@@ -26,7 +26,7 @@ def get_file_path(platform, platformBuildAction):
 if __name__ == "__main__":
     with open('../settings.json') as f:
         settings = json.load(f)
-    filename = sys.argv[1]
+    uuid = sys.argv[1]
     platform = sys.argv[2]
     email = sys.argv[3]
     platformBuildAction = sys.argv[4]
@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     paths = get_file_path(platform, platformBuildAction)
     if len(paths) == 0:
-        send_status(filename, "FAILURE", settings);
+        send_status(uuid, "FAILURE", settings);
         send_email(receiver_email=email, message="Build Failed", settings=settings, failed=True)
         raise Exception("path does not exists")
         sys.exit()
@@ -47,15 +47,15 @@ if __name__ == "__main__":
     print(filepath)
     if (not path.exists(filepath)):
         print("file does not exists")
-        send_status(filename, "FAILURE", settings);
+        send_status(uuid, "FAILURE", settings);
         send_email(receiver_email=email, message="Build Failed", settings=settings, failed=True)
         raise Exception("file does not exists")
         sys.exit()
 
-    filename_with_ext = filename + (".ipa" if platform == "ios" else ".apk")
+    filename_with_ext = uuid + (".ipa" if platform == "ios" else ".apk")
     upload_file(filepath, filename_with_ext)
     os.remove(filepath)
 
     link = settings["TRIGGER_BUILD_URL"]+"/GenerateLink/"+filename_with_ext
     send_email(receiver_email=email, message="{arguementsUsed} \n\n {link}".format(arguementsUsed=arguementsUsed, link=link), settings=settings)
-    send_status(filename, "SUCCESS", settings);
+    send_status(uuid, "SUCCESS", settings);

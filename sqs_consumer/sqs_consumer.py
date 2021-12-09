@@ -69,7 +69,7 @@ def trigger_internal_job(custom_arguements, uuid, email, branch, platform, platf
         print(e)
 
 
-    send_status(uuid, "Failed", settings);
+    send_status(uuid, "FAILURE", settings);
     send_email(receiver_email=email, message="Build Failed", settings=settings, failed=True)
     
     return False

@@ -5,7 +5,7 @@ from sqs_common import SignalHandler, send_queue_metrics
 import json
 import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
-from common import send_status
+from common import send_status, send_email
 from send_teamcity_status import get_and_send_overall_status
 
 # dlq = sqs.get_queue_by_name(QueueName=os.environ["SQS_DEAD_LETTER_QUEUE_NAME"])
@@ -70,6 +70,8 @@ def trigger_internal_job(custom_arguements, uuid, email, branch, platform, platf
 
 
     send_status(uuid, "Failed", settings);
+    send_email(receiver_email=email, message="Build Failed", settings=settings, failed=True)
+    
     return False
 
 

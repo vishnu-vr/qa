@@ -13,14 +13,18 @@ from email.message import EmailMessage
 
 settings = None
 
-def send_email(receiver_email, message, failed=False):
+def send_email(receiver_email, message, arguementsUsed=None, failed=False):
     port = 465  # For SSL
     smtp_server = settings["SMTP_SERVER"]
     sender_email = settings["EMAIL"]
     password = settings["SMTP_PASSWORD"]
 
     msg = EmailMessage()
-    msg.set_content(message)
+    if arguementsUsed:
+        msg.set_content(arguementsUsed + "\n\n" + message)
+    else:
+        msg.set_content(message)
+
     msg['Subject'] = ("Build Failed" if failed else "Build Succeeded")
     msg['From'] = sender_email
     msg['To'] = receiver_email
@@ -63,6 +67,7 @@ if __name__ == "__main__":
     platform = sys.argv[2]
     email = sys.argv[3]
     platformBuildAction = sys.argv[4]
+    arguementsUsed = sys.argv[5]
 
     if platform not in ["ios","android"]:
         raise Exception("invalid platform")
@@ -89,5 +94,5 @@ if __name__ == "__main__":
     os.remove(filepath)
 
     link = settings["TRIGGER_BUILD_URL"]+"/GenerateLink/"+filename_with_ext
-    send_email(email, link)
+    send_email(email, link, arguementsUsed=arguementsUsed)
     send_status(filename, "SUCCESS", settings);

@@ -119,5 +119,7 @@ if __name__ == "__main__":
                                 aws_access_key_id = AWS_ACCESS_KEY,
                                 aws_secret_access_key = AWS_SECRET_KEY)
 
+    start_teamcity()
+    
     queue = sqs.get_queue_by_name(QueueName = AWS_SQS_QUEUE_NAME)
     consumer(queue)

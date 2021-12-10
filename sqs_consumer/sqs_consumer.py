@@ -7,6 +7,7 @@ import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from common import send_status, send_email
 from send_teamcity_status import get_and_send_overall_status
+import subprocess
 
 # dlq = sqs.get_queue_by_name(QueueName=os.environ["SQS_DEAD_LETTER_QUEUE_NAME"])
 
@@ -101,7 +102,7 @@ def start_teamcity():
     TEAMCITY_LOC = settings['TEAMCITY_SERVER_LOC']
     cwd = os.getcwd()
     os. chdir(TEAMCITY_LOC)
-    proc = subprocess.Popen(['./bin/runAll.sh', 'start'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.Popen(['./bin/runAll.sh', 'start'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
     print(stderr, stdout, sep="\n===\n")
 

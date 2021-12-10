@@ -97,6 +97,16 @@ def consumer(queue):
             # remove the payload from sqs
             message.delete()
 
+def start_teamcity():
+    TEAMCITY_LOC = settings['TEAMCITY_SERVER_LOC']
+    cwd = os.getcwd()
+    os. chdir(TEAMCITY_LOC)
+    proc = subprocess.Popen(['./bin/runAll.sh', 'start'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+    print(stderr, stdout, sep="\n===\n")
+
+    os. chdir(cwd)
+
 if __name__ == "__main__":
     with open('../settings.json') as f:
         settings = json.load(f)

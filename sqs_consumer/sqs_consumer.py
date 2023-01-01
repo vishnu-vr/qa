@@ -13,7 +13,7 @@ import subprocess
 
 settings = None
 
-def trigger_internal_job(custom_arguements, uuid, email, branch, platform, platformBuildAction):
+def trigger_internal_job(custom_arguements, uuid, email, branch, platform, platformBuildAction, instanceName):
     TEAMCITY_URL = settings['TEAMCITY_URL'] + "/buildQueue"
     headers = {
         "Authorization": "Bearer " + settings['AUTHORIZATION'],
@@ -22,7 +22,7 @@ def trigger_internal_job(custom_arguements, uuid, email, branch, platform, platf
     }
     myobj = {
         "buildType": {
-            "id": "Test_BuildApk"
+            "id": settings['BUILDTYPE_ID']
         },
         "properties": {
             "property": [
@@ -47,8 +47,12 @@ def trigger_internal_job(custom_arguements, uuid, email, branch, platform, platf
                     "value": platform
                 },
                 {
-                    "name": "platformBuildAction",
+                    "name": "platform_build_action",
                     "value": platformBuildAction
+                },
+                {
+                    "name": "instance_name",
+                    "value": instanceName
                 }
             ]
         }
@@ -90,7 +94,7 @@ def consumer(queue):
                 if (payload["type"] == "retrieve_status"):
                     get_and_send_overall_status(payload, settings)
                 else:
-                    trigger_internal_job(payload["message"],payload["random"],payload["email"],payload["branch"],payload["platform"],payload["platformBuildAction"])
+                    trigger_internal_job(payload["message"],payload["random"],payload["email"],payload["branch"],payload["platform"],payload["platformBuildAction"],payload["instanceName"])
             except Exception as e:
                 print(f"exception while processing message: {repr(e)}")
                 # continue
